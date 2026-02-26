@@ -7,12 +7,11 @@ def knapsack_slides(knapsack_weight: int, items: list[int]) -> int:
     dp = [[0] * (W + 1) for _ in range(n + 1)]
 
     for i in range(1, n + 1):
-        w = items[i - 1][0]
-        value = items[i - 1][1]
+        weight, value = items[i - 1]
         for j in range(1, W + 1):
             dp[i][j] = dp[i - 1][j]
-            if w <= j:
-                dp[i][j] = max(dp[i - 1][j - w] + value, dp[i][j])
+            if weight <= j:
+                dp[i][j] = max(dp[i - 1][j - weight] + value, dp[i][j])
     return dp[n][W]     
 
 if __name__ == '__main__':

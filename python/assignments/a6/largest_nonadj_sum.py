@@ -7,10 +7,7 @@ def largest_nonadj_sum(arr: list[int]) -> int:
     
     a, b = max(arr[0], 0), max(max(arr[0:2]), 0)
     for i in range(2, n):
-        if arr[i] >= 0:
-            a, b = b, max(a + arr[i], b)
-        else:
-            a = b
+        a, b = b, max(a + arr[i], b)
     return b
 
 indices = []
