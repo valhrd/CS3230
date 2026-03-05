@@ -1,7 +1,7 @@
 # Time Complexity: O(W * I)
 # Space Complexity: O(W * I) (can be reduced to O(W) since we only rely on the previous layer)
 # This is NOT a polynomial algorithm since the knapsack volume/weight is expressed in O(log W) length
-def knapsack_slides(knapsack_weight: int, items: list[int]) -> int:
+def knapsack_slides(knapsack_weight: int, items: list[tuple[int, int]]) -> int:
     n = len(items)
     W = knapsack_weight
     dp = [[0] * (W + 1) for _ in range(n + 1)]
@@ -16,6 +16,7 @@ def knapsack_slides(knapsack_weight: int, items: list[int]) -> int:
 
 if __name__ == '__main__':
     knapsack_weight = 15
+    # List of (weight, value) pairs
     items = [
         (12, 4),
         (2, 2),
