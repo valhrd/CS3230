@@ -1,53 +1,56 @@
 from heapq import *
 from typing import Union
 
+class Node:
+    def __init__(self, val: tuple):
+        self.val = val
+        self.left = None
+        self.right = None
+
+    def is_leaf(self) -> bool:
+        return self.left is None and self.right is None
+
+    def __lt__(self, other) -> int:
+        return self.val > other.val
+    
+    def __repr__(self):
+        return str(self.val)
+
 # Overall TC: O()
 def huffman_encoding(char_freqs: dict[str, int]) -> dict[str, str]:
 
     # TC: O(n) (heapify can be done in O(n) time)
-    n = len(char_freqs)
-    minheap = [(freq, char) for char, freq in char_freqs.items()]
+    minheap = [(freq, Node((char,))) for char, freq in char_freqs.items()]
     heapify(minheap)
-    h = {}
 
-    # We will use a "flattened" representation of a tree instead of defining a Node struct/class
-    # Since each non-leaf node as exactly 2 children, we can represent a tree as a series of nested tuples
-    # Example: ('a', (('b', 'c'), ('d', 'e'))) would represent:
-    #      () 
-    #    /    \
-    #   a     ()
-    #       /    \
-    #     ()      ()
-    #    /  \    /  \
-    #   b    c  d    e
-    #
     # We pop the 2 least frequency characters/grouped characters and push their combined tuple back onto the minheap
     # We terminate when there is only 1 element left (base case)
     # O(nlogn) (each heappop is O(logn), we decrease the size of the heap by 1 each time, hence the stated time complexity)
     while len(minheap) > 1:
-        f1, c1 = heappop(minheap)
-        f2, c2 = heappop(minheap)
-        t = (c1, c2)
+        f1, n1 = heappop(minheap)
+        f2, n2 = heappop(minheap)
+        t = Node(n1.val + n2.val)
+        t.left, t.right = n1, n2
         heappush(minheap, (f1 + f2, t))
-    
+
     _, tree = minheap[0]
     encoding = dict()
     # This is for recursive backtracking to get the encoding of each character
     def dfs(
-        curr_node: Union[tuple, str],
+        curr_node: Node,
         curr_encoding: list[str],
         encoding: dict[str, str]
     ):
-        if isinstance(curr_node, str):
-            encoding[curr_node] = ''.join(curr_encoding)
+        if curr_node.is_leaf():
+            encoding[curr_node.val[0]] = ''.join(curr_encoding)
             return
 
         curr_encoding.append('0')
-        dfs(curr_node[0], curr_encoding, encoding)
+        dfs(curr_node.left, curr_encoding, encoding)
         curr_encoding.pop()
 
         curr_encoding.append('1')
-        dfs(curr_node[1], curr_encoding, encoding)
+        dfs(curr_node.right, curr_encoding, encoding)
         curr_encoding.pop()
     
     dfs(tree, [], encoding)
